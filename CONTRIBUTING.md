@@ -43,6 +43,22 @@ scrolls sideways on a phone.
 `demo_url` and `api_url` are optional and null until something is actually deployed. A
 dead demo link is worse than no demo link, and the schema validates both as URIs.
 
+## First-time setup
+
+```bash
+npm ci
+scripts/install-hooks.sh
+```
+
+The hook runs the clean-room scan and the generated-README drift check before every
+commit. That ordering is the point: **CI runs after the push, and this repository is
+public**, so a denylisted term caught by CI is a term that is already public and already
+in the remote's history. The hook is the only control that catches it while it is still
+local.
+
+Re-run `scripts/install-hooks.sh` after any rename — the hook bakes its paths in at
+install time and does not track changes to the script that wrote it.
+
 ## Gates
 
 ```bash
