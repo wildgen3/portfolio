@@ -1,0 +1,18 @@
+# Generic clean-room markers. Public by design — these disclose nothing.
+# Sensitive terms live in the CLEAN_ROOM_DENYLIST repository secret, never here.
+#
+# PHRASES ONLY. Single words like "confidential" or "proprietary" collide with
+# legitimate domain vocabulary (this model has a `business_confidential` data class),
+# and a check that fires on correct documents trains its reader to ignore it.
+#
+# Disclosure markers: text carrying these was not written for publication.
+company confidential
+confidential and proprietary
+proprietary and confidential
+internal use only
+do not distribute
+not for external distribution
+attorney client privileged
+# Personal data markers: this repository holds synthetic fixtures only.
+social security number
+personally identifiable information

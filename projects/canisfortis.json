@@ -1,0 +1,20 @@
+{
+  "id": "canisfortis",
+  "name": "Canis Fortis",
+  "tagline": "Individual-dog re-identification and behavioural event extraction for training clubs.",
+  "status": "active",
+  "phase": "prototype",
+  "featured": true,
+  "order": 20,
+  "role": "Architect and sole implementer",
+  "period": { "start": "2026-01", "end": null },
+  "problem": "The predecessor was a demo shell: auth stubbed, nothing persisted, a dashboard rendering a hardcoded array, uploads analysed then discarded, and a learning engine that did not learn. This rebuild exists to make those claims true.",
+  "outcome": null,
+  "capabilities": ["evaluation-and-measurement", "platform-modernization", "deployment-architecture"],
+  "stack": ["Next.js", "Python", "Terraform", "GCP", "Vertex AI"],
+  "repo": "https://github.com/wildgen3/pawsitive-insights",
+  "homepage": null,
+  "artifacts": [],
+  "case_study": null,
+  "confidentiality": "public"
+}

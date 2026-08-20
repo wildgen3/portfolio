@@ -1,0 +1,45 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 6 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Project entries are valid and README is in sync
+        # projects/*.json is the source of truth; README.md is generated from it. This
+        # asserts the two cannot disagree, and that every capability tag is in the
+        # closed enum.
+        run: node scripts/build.mjs --check
+
+      - name: Clean-room scan
+        # The term list is a repository secret. In CI the scanner reports a count only:
+        # this log is world-readable on a public repo, so a location would point at a
+        # public line and disclose the term by inspection.
+        #
+        # NEVER convert this workflow to pull_request_target. That would hand the
+        # denylist secret to any forked pull request. Fork PRs failing this step with
+        # exit 2 (no terms configured) is correct fail-closed behaviour, not a bug.
+        env:
+          CLEAN_ROOM_DENYLIST: ${{ secrets.CLEAN_ROOM_DENYLIST }}
+        run: python3 scripts/clean-room-check.py

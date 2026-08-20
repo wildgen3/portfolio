@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wildgen3/portfolio/schema/project.schema.json",
+  "title": "Portfolio project entry",
+  "description": "One project. The README and the site are both generated from these files, so this schema is the single source of truth for what a project is.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "tagline", "status", "role", "problem", "capabilities", "stack", "repo", "confidentiality"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string" },
+    "tagline": { "type": "string", "maxLength": 140 },
+    "status": { "enum": ["active", "shipped", "archived"] },
+    "phase": { "enum": ["spec", "prototype", "production", "maintenance"] },
+    "featured": { "type": "boolean", "default": false },
+    "order": { "type": "integer" },
+    "role": { "type": "string" },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": { "type": "string", "pattern": "^\\d{4}-\\d{2}$" },
+        "end": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}$" }
+      }
+    },
+    "problem": { "type": "string" },
+    "outcome": { "type": ["string", "null"], "description": "What changed, measurably. Numbers or null — never adjectives." },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Closed enum, deliberately. Every project is tagged against the positioning, so the portfolio IS the positioning document rather than a list of side projects.",
+      "items": {
+        "enum": [
+          "deployment-architecture",
+          "workload-transition",
+          "technical-blocker-resolution",
+          "cross-functional-technical-leadership",
+          "evaluation-and-measurement",
+          "platform-modernization"
+        ]
+      }
+    },
+    "stack": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "repo": { "type": "string", "format": "uri" },
+    "homepage": { "type": ["string", "null"], "format": "uri" },
+    "artifacts": {
+      "type": "array",
+      "description": "Deep links a reviewer should open. Three to five; more is a table of contents, not a recommendation.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "url"],
+        "properties": {
+          "label": { "type": "string" },
+          "url": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "case_study": { "type": ["string", "null"] },
+    "confidentiality": {
+      "enum": ["public", "clean-room", "private-summary"],
+      "description": "A clean-room value makes the build emit a standard disclaimer into both the README entry and the case-study header. The boundary is rendered by tooling, not remembered by the author."
+    }
+  }
+}
