@@ -140,18 +140,28 @@ table on the front page.
 
 ## 7. Evidence the gates are real
 
-Five gates run today and fail the build. Each was verified by **planting the defect it
-exists to catch**:
+Gates run today and fail the build. Each was verified by **planting the defect it exists
+to catch**:
 
 | Planted defect | Caught by |
 | --- | --- |
 | Size predicate moved from company scope to establishment scope — the real-world recordkeeping bug | `L-04`, naming the attribute and both scopes |
 | Negation over an illustrative code list | `L-01` |
 | A cycle in the credential dependency graph | Graph integrity, printing the loop |
+| A model-client import in the decision plane | Decision-plane purity, over imports and manifests |
+| A statistic with no source reference | Citation gate |
 | A hand-edited ADR index | Index regeneration diff |
+| A malformed diagram | Structural diagram check |
 | A denylisted term in a document | Clean-room scanner |
 
 A gate that has never failed is a gate nobody has tested.
+
+The repository is equally explicit about what is **not** enforced yet. Constraints that
+need a database, an evaluator, or migrations are marked "will be enforced by" rather than
+"enforced by", because those pieces do not exist. Two claims in an earlier draft said
+"CI asserts…" for checks that had never been written — including the one behind the
+central architectural decision. Both are now implemented, and both are in the failure
+log rather than quietly corrected.
 
 ## 8. How I worked with agents
 
