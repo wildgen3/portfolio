@@ -62,13 +62,26 @@ def load_terms() -> tuple[list[str], list[str]]:
     raw = os.environ.get("CLEAN_ROOM_DENYLIST")
     if raw is None:
         path_env = os.environ.get("CLEAN_ROOM_DENYLIST_FILE")
-        candidates = [Path(path_env)] if path_env else []
-        candidates.append(Path.home() / ".config" / "permitportal" / "denylist.txt")
-        raw = ""
-        for candidate in candidates:
-            if candidate.is_file():
-                raw = candidate.read_text(encoding="utf-8")
-                break
+        if path_env:
+            # An explicitly-named file that does not exist is a CONFIGURATION ERROR,
+            # never a reason to fall back. Falling back would scan against a different
+            # list than the one asked for and report a pass -- the operator would
+            # believe they had checked something they had not. Silently substituting a
+            # source is the same defect as silently having no source.
+            explicit = Path(path_env)
+            if not explicit.is_file():
+                print(
+                    f"clean-room: CLEAN_ROOM_DENYLIST_FILE points at {path_env!r}, "
+                    f"which does not exist.\n"
+                    "  Refusing to fall back to the default list: a pass against a list "
+                    "you did not ask for is worse than no scan at all.",
+                    file=sys.stderr,
+                )
+                raise SystemExit(2)
+            raw = explicit.read_text(encoding="utf-8")
+        else:
+            default = Path.home() / ".config" / "permitportal" / "denylist.txt"
+            raw = default.read_text(encoding="utf-8") if default.is_file() else ""
 
     sensitive = [t.strip() for t in raw.splitlines() if t.strip() and not t.startswith("#")]
 
@@ -110,17 +123,20 @@ def main() -> int:
     # Locations are printed only when the tree is still private. See the module docstring.
     local = "--local" in sys.argv
     sensitive, generic = load_terms()
-    if not sensitive and not generic:
-        print("clean-room: no terms configured.", file=sys.stderr)
+    if not sensitive:
+        # Hard failure, not a warning. In CI, `CLEAN_ROOM_DENYLIST: ${{ secrets.X }}`
+        # expands to an EMPTY STRING when the secret is missing or was deleted -- so a
+        # warning here would let the gate degrade to generic-terms-only and still go
+        # green. The generic list is additive; the sensitive list IS the control.
+        print("clean-room: no sensitive terms configured.", file=sys.stderr)
         print(
             "  Set CLEAN_ROOM_DENYLIST, or create ~/.config/permitportal/denylist.txt.\n"
-            "  Refusing to report a pass without having checked anything.",
+            "  The generic list alone is not this control and does not substitute for it.\n"
+            "  Refusing to report a pass without having checked what matters.\n"
+            "  (On a fork pull request this is expected: forks receive no secrets.)",
             file=sys.stderr,
         )
         return 2
-
-    if not sensitive:
-        print("clean-room: WARNING — generic list only; no sensitive terms configured.", file=sys.stderr)
 
     patterns = [
         ("sensitive", build_pattern(sensitive)),

@@ -51,5 +51,6 @@ CLEAN_ROOM_DENYLIST_FILE=<your denylist> \
   python3 scripts/clean-room-check.py --local        # nothing that shouldn't be here
 ```
 
-The scanner exits 2 rather than 0 when no terms are configured. It refuses to report a
-pass without having checked anything.
+The scanner exits 2 when the sensitive list is empty, or when the file you named does not
+exist. It never falls back to a different list than the one you asked for, and the generic
+list is not a substitute for the sensitive one.
