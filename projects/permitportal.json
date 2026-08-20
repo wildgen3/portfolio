@@ -1,6 +1,6 @@
 {
-  "id": "permitgraph",
-  "name": "PermitGraph",
+  "id": "permitportal",
+  "name": "PermitPortal",
   "tagline": "Deterministic obligation resolution for state business one-stop portals.",
   "status": "active",
   "phase": "spec",
@@ -30,26 +30,26 @@
     "Terraform",
     "GCP Cloud Run"
   ],
-  "repo": "https://github.com/wildgen3/permitgraph",
+  "repo": "https://github.com/wildgen3/permitportal",
   "homepage": null,
   "artifacts": [
     {
       "label": "Architecture (C4)",
-      "url": "https://github.com/wildgen3/permitgraph/blob/main/docs/09-architecture-c4.md"
+      "url": "https://github.com/wildgen3/permitportal/blob/main/docs/09-architecture-c4.md"
     },
     {
       "label": "19 architecture decision records",
-      "url": "https://github.com/wildgen3/permitgraph/blob/main/docs/adr/README.md"
+      "url": "https://github.com/wildgen3/permitportal/blob/main/docs/adr/README.md"
     },
     {
       "label": "Rules DSL and its linter",
-      "url": "https://github.com/wildgen3/permitgraph/blob/main/docs/06-rules-dsl.md"
+      "url": "https://github.com/wildgen3/permitportal/blob/main/docs/06-rules-dsl.md"
     },
     {
       "label": "AGENTS.md \u2014 agent guardrails and the failure log",
-      "url": "https://github.com/wildgen3/permitgraph/blob/main/AGENTS.md"
+      "url": "https://github.com/wildgen3/permitportal/blob/main/AGENTS.md"
     }
   ],
-  "case_study": "case-studies/permitgraph.md",
+  "case_study": "case-studies/permitportal.md",
   "confidentiality": "clean-room"
 }

@@ -1,4 +1,4 @@
-# PermitGraph
+# PermitPortal
 
 **Deterministic obligation resolution for state business one-stop portals.**
 
@@ -7,9 +7,9 @@
 
 A ten-minute read. If you have three, open these instead:
 
-- [Architecture (C4)](https://github.com/wildgen3/permitgraph/blob/main/docs/09-architecture-c4.md)
-- [19 architecture decision records](https://github.com/wildgen3/permitgraph/blob/main/docs/adr/README.md)
-- [The rules DSL and its linter](https://github.com/wildgen3/permitgraph/blob/main/docs/06-rules-dsl.md)
+- [Architecture (C4)](https://github.com/wildgen3/permitportal/blob/main/docs/09-architecture-c4.md)
+- [19 architecture decision records](https://github.com/wildgen3/permitportal/blob/main/docs/adr/README.md)
+- [The rules DSL and its linter](https://github.com/wildgen3/permitportal/blob/main/docs/06-rules-dsl.md)
 
 ---
 
@@ -114,11 +114,11 @@ review convention.
 
 | Decision | Rejected alternative | Why |
 | --- | --- | --- |
-| [The rules engine is the system of record; models never decide](https://github.com/wildgen3/permitgraph/blob/main/docs/adr/0001-rules-engine-is-the-system-of-record.md) | Model decides, human reviews | A sampled decision is not reproducible, and an unreproducible determination cannot be appealed |
-| [A code hit proves inclusion; a code miss proves nothing](https://github.com/wildgen3/permitgraph/blob/main/docs/adr/0008-list-polarity-is-typed.md) | Treat every code list as exhaustive | Only 5 of 11 categories in one federal rule cite a code at all, and those are examples. Wrong exclusions are invisible to the person they harm |
-| [Missing input is UNKNOWN, never false](https://github.com/wildgen3/permitgraph/blob/main/docs/adr/0006-kleene-three-valued-logic.md) | Two-valued logic | Absence-as-false silently returns "does not apply" to every business nobody has asked yet |
-| [Codes are `(scheme, vintage, code)` triples](https://github.com/wildgen3/permitgraph/blob/main/docs/adr/0002-scheme-vintage-code-triple.md) | Bare code strings | At least seven codes were reused for *different concepts* across revisions. Cheap on day one, a rewrite later |
-| [Author in YAML, compile to CEL](https://github.com/wildgen3/permitgraph/blob/main/docs/adr/0007-author-yaml-compile-to-cel.md) | OPA/Rego | Rego's negation-as-failure — `not p` succeeding on absent data — is the exact bug being engineered against |
+| [The rules engine is the system of record; models never decide](https://github.com/wildgen3/permitportal/blob/main/docs/adr/0001-rules-engine-is-the-system-of-record.md) | Model decides, human reviews | A sampled decision is not reproducible, and an unreproducible determination cannot be appealed |
+| [A code hit proves inclusion; a code miss proves nothing](https://github.com/wildgen3/permitportal/blob/main/docs/adr/0008-list-polarity-is-typed.md) | Treat every code list as exhaustive | Only 5 of 11 categories in one federal rule cite a code at all, and those are examples. Wrong exclusions are invisible to the person they harm |
+| [Missing input is UNKNOWN, never false](https://github.com/wildgen3/permitportal/blob/main/docs/adr/0006-kleene-three-valued-logic.md) | Two-valued logic | Absence-as-false silently returns "does not apply" to every business nobody has asked yet |
+| [Codes are `(scheme, vintage, code)` triples](https://github.com/wildgen3/permitportal/blob/main/docs/adr/0002-scheme-vintage-code-triple.md) | Bare code strings | At least seven codes were reused for *different concepts* across revisions. Cheap on day one, a rewrite later |
+| [Author in YAML, compile to CEL](https://github.com/wildgen3/permitportal/blob/main/docs/adr/0007-author-yaml-compile-to-cel.md) | OPA/Rego | Rego's negation-as-failure — `not p` succeeding on absent data — is the exact bug being engineered against |
 
 ## 6. What I built versus what I specified
 
@@ -165,7 +165,7 @@ log rather than quietly corrected.
 
 ## 8. How I worked with agents
 
-The repository has an [`AGENTS.md`](https://github.com/wildgen3/permitgraph/blob/main/AGENTS.md)
+The repository has an [`AGENTS.md`](https://github.com/wildgen3/permitportal/blob/main/AGENTS.md)
 where every rule traces to something that actually went wrong, and a **"What failed"**
 log kept as a running record rather than pruned. Four entries from the build:
 
@@ -224,4 +224,4 @@ third. That gate is worth more than any amount of additional architecture.
 
 ---
 
-*Repository: [github.com/wildgen3/permitgraph](https://github.com/wildgen3/permitgraph)*
+*Repository: [github.com/wildgen3/permitportal](https://github.com/wildgen3/permitportal)*

@@ -11,7 +11,7 @@ are a closed set validated in CI, so this page cannot quietly become a list of h
 
 ## Selected work
 
-### [PermitGraph](https://github.com/wildgen3/permitgraph)
+### [PermitPortal](https://github.com/wildgen3/permitportal)
 
 **Deterministic obligation resolution for state business one-stop portals.**
 
@@ -25,12 +25,12 @@ Around twenty US states run partial business one-stop portals and about thirty r
 
 Start here:
 
-- [Architecture (C4)](https://github.com/wildgen3/permitgraph/blob/main/docs/09-architecture-c4.md)
-- [19 architecture decision records](https://github.com/wildgen3/permitgraph/blob/main/docs/adr/README.md)
-- [Rules DSL and its linter](https://github.com/wildgen3/permitgraph/blob/main/docs/06-rules-dsl.md)
-- [AGENTS.md — agent guardrails and the failure log](https://github.com/wildgen3/permitgraph/blob/main/AGENTS.md)
+- [Architecture (C4)](https://github.com/wildgen3/permitportal/blob/main/docs/09-architecture-c4.md)
+- [19 architecture decision records](https://github.com/wildgen3/permitportal/blob/main/docs/adr/README.md)
+- [Rules DSL and its linter](https://github.com/wildgen3/permitportal/blob/main/docs/06-rules-dsl.md)
+- [AGENTS.md — agent guardrails and the failure log](https://github.com/wildgen3/permitportal/blob/main/AGENTS.md)
 
-[Read the case study →](case-studies/permitgraph.md)
+[Read the case study →](case-studies/permitportal.md)
 
 ---
 

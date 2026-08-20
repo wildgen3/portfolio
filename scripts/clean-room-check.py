@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Clean-room scanner (shared with the permitgraph repository).
+"""Clean-room scanner (shared with the permitportal repository).
 
 Screens the working tree for terms that must never appear in this repository.
 
@@ -9,7 +9,7 @@ from, in order of precedence:
 
   1. $CLEAN_ROOM_DENYLIST        (newline-separated; CI writes the repo secret here)
   2. $CLEAN_ROOM_DENYLIST_FILE   (path to a file; used by the pre-commit hook)
-  3. ~/.config/permitgraph/denylist.txt
+  3. ~/.config/permitportal/denylist.txt
 
 A generic list of non-sensitive markers ships in .github/clean-room-generic.txt and
 is always applied.
@@ -63,7 +63,7 @@ def load_terms() -> tuple[list[str], list[str]]:
     if raw is None:
         path_env = os.environ.get("CLEAN_ROOM_DENYLIST_FILE")
         candidates = [Path(path_env)] if path_env else []
-        candidates.append(Path.home() / ".config" / "permitgraph" / "denylist.txt")
+        candidates.append(Path.home() / ".config" / "permitportal" / "denylist.txt")
         raw = ""
         for candidate in candidates:
             if candidate.is_file():
@@ -113,7 +113,7 @@ def main() -> int:
     if not sensitive and not generic:
         print("clean-room: no terms configured.", file=sys.stderr)
         print(
-            "  Set CLEAN_ROOM_DENYLIST, or create ~/.config/permitgraph/denylist.txt.\n"
+            "  Set CLEAN_ROOM_DENYLIST, or create ~/.config/permitportal/denylist.txt.\n"
             "  Refusing to report a pass without having checked anything.",
             file=sys.stderr,
         )

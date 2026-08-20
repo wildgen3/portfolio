@@ -4,7 +4,7 @@
  *
  * projects/*.json is the single source of truth. README.md is GENERATED from it and
  * diff-gated in CI, so the two can never disagree. This is the same pattern the
- * PermitGraph repo uses for its LinkML-generated artifacts, applied here.
+ * PermitPortal repo uses for its LinkML-generated artifacts, applied here.
  *
  *   node scripts/build.mjs           write README.md
  *   node scripts/build.mjs --check   fail if README.md is stale, or any entry is invalid
