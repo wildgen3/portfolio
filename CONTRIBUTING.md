@@ -23,6 +23,26 @@ of things I happened to build.
 standard disclaimer into both the README entry and the case-study header, so the boundary
 is applied by tooling rather than remembered.
 
+## The site
+
+`npm ci` once, then:
+
+```bash
+node scripts/build.mjs          # regenerate README.md from projects/*.json
+node scripts/build.mjs --site   # regenerate site/ (gitignored; CI builds and deploys it)
+```
+
+The README and the site are two renderers over the same data, so neither can drift from
+the other. `site/` is not committed — `pages.yml` builds it from source on every push to
+`main` and deploys to GitHub Pages.
+
+Case studies render through `marked`; Mermaid blocks are lifted to `<pre class="mermaid">`
+and rendered client-side. Tables scroll inside their own container so the page never
+scrolls sideways on a phone.
+
+`demo_url` and `api_url` are optional and null until something is actually deployed. A
+dead demo link is worse than no demo link, and the schema validates both as URIs.
+
 ## Gates
 
 ```bash

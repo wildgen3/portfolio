@@ -22,15 +22,23 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24'
+          cache: npm
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
+
+      - run: npm ci
 
       - name: Project entries are valid and README is in sync
         # projects/*.json is the source of truth; README.md is generated from it. This
         # asserts the two cannot disagree, and that every capability tag is in the
         # closed enum.
         run: node scripts/build.mjs --check
+
+      - name: Site builds
+        # A broken template or an unrenderable case study fails here rather than
+        # silently publishing a broken page.
+        run: node scripts/build.mjs --site
 
       - name: Clean-room scan
         # The term list is a repository secret. In CI the scanner reports a count only:

@@ -1,0 +1,13 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "type": "module",
+  "description": "Generated from projects/*.json. See CONTRIBUTING.md.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check"
+  },
+  "devDependencies": {
+    "marked": "^16.4.0"
+  }
+}

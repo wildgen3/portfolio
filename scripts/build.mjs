@@ -14,7 +14,7 @@
  * a node_modules directory to render its own README is a portfolio that stops rendering.
  */
 
-import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -157,7 +157,118 @@ that fails \`schema/project.schema.json\` fails the build.
 Licensed [CC-BY-4.0](LICENSE).
 `;
 
-if (process.argv.includes("--check")) {
+// ---------------------------------------------------------------------------
+// Static site. Same data, second renderer -- so the README and the site cannot
+// disagree about anything, because neither is written by hand.
+// ---------------------------------------------------------------------------
+async function buildSite() {
+  const { marked } = await import("marked");
+  marked.setOptions({ gfm: true, breaks: false });
+
+  const template = readFileSync(join(REPO, "templates", "page.html"), "utf8");
+  const SITE = join(REPO, "site");
+  rmSync(SITE, { recursive: true, force: true });
+  mkdirSync(join(SITE, "case-studies"), { recursive: true });
+
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  // Wide blocks scroll inside their own container rather than the page.
+  const wrapWide = (html) =>
+    html.replace(/<table>/g, '<div class="scroll"><table>').replace(/<\/table>/g, "</table></div>");
+
+  // Mermaid fences survive marked as <pre><code class="language-mermaid">.
+  // Convert to the <pre class="mermaid"> the renderer expects.
+  const liftMermaid = (html) =>
+    html.replace(
+      /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+      (_, code) => `<pre class="mermaid">${code}</pre>`
+    );
+
+  const MERMAID_CDN =
+    '<script type="module">import m from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";' +
+    'const d=matchMedia("(prefers-color-scheme: dark)").matches;' +
+    'm.initialize({startOnLoad:true,theme:d?"dark":"neutral",securityLevel:"strict"});<\/script>';
+
+  const page = ({ title, description, body, footer, scripts = "" }) =>
+    template
+      .replace(/\{\{TITLE\}\}/g, esc(title))
+      .replace(/\{\{DESCRIPTION\}\}/g, esc(description))
+      .replace("{{BODY}}", body)
+      .replace("{{FOOTER}}", footer)
+      .replace("{{SCRIPTS}}", scripts);
+
+  const FOOTER =
+    'Generated from <code>projects/*.json</code>. ' +
+    '<a href="https://github.com/wildgen3/portfolio">Source</a> \u00b7 ' +
+    '<a href="https://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a>';
+
+  // --- index ---------------------------------------------------------------
+  const card = (p) => {
+    const chips = p.capabilities
+      .map((c) => `<li>${esc(CAPABILITY_LABELS[c] ?? c)}</li>`).join("");
+    const links = [
+      `<a href="${esc(p.repo)}">Repository</a>`,
+      p.homepage ? `<a href="${esc(p.homepage)}">Live</a>` : "",
+      p.demo_url ? `<a href="${esc(p.demo_url)}">Demo</a>` : "",
+      p.api_url ? `<a href="${esc(p.api_url)}">API</a>` : "",
+      p.case_study ? `<a href="${esc(p.case_study.replace(/\.md$/, ".html"))}">Case study</a>` : "",
+    ].filter(Boolean).join(" \u00b7 ");
+    const artifacts = (p.artifacts ?? []).length
+      ? `<p class="meta">Start here: ${p.artifacts.map((a) => `<a href="${esc(a.url)}">${esc(a.label)}</a>`).join(" \u00b7 ")}</p>`
+      : "";
+    return `<section>
+  <h2>${esc(p.name)}</h2>
+  <p><strong>${esc(p.tagline)}</strong></p>
+  <p>${esc(p.problem)}</p>
+  ${p.outcome ? `<p><strong>Outcome.</strong> ${esc(p.outcome)}</p>` : ""}
+  ${p.confidentiality === "clean-room" ? `<blockquote>${esc(DISCLAIMER.replace(/^&gt; ?/, ""))}</blockquote>` : ""}
+  <ul class="chips">${chips}</ul>
+  <p class="meta">${esc(p.role)} \u00b7 ${esc(p.stack.join(", "))} \u00b7 ${esc(p.status)}${p.phase ? " \u00b7 " + esc(p.phase) : ""}</p>
+  ${artifacts}
+  <p class="meta">${links}</p>
+</section>`;
+  };
+
+  const indexBody = `<h1>Rome Romberger</h1>
+<p class="lede">Cloud architecture and deployment engineering. I take systems that work in a demo and make them work in someone else's environment \u2014 which is usually a different problem.</p>
+${featured.map(card).join("\n")}
+${rest.length ? `<h2>Also</h2>\n${rest.map(card).join("\n")}` : ""}`;
+
+  writeFileSync(join(SITE, "index.html"), page({
+    title: "Rome Romberger",
+    description: "Cloud architecture and deployment engineering.",
+    body: indexBody,
+    footer: FOOTER,
+  }));
+
+  // --- one page per case study ---------------------------------------------
+  let studies = 0;
+  for (const p of projects) {
+    if (!p.case_study) continue;
+    const md = readFileSync(join(REPO, p.case_study), "utf8");
+    let html = wrapWide(liftMermaid(marked.parse(md)));
+    const body = `<a class="backlink" href="../index.html">\u2190 All work</a>\n${html}`;
+    const out = join(SITE, p.case_study.replace(/\.md$/, ".html"));
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, page({
+      title: `${p.name} \u2014 case study`,
+      description: p.tagline,
+      body,
+      footer: FOOTER,
+      scripts: /```mermaid/.test(md) ? MERMAID_CDN : "",
+    }));
+    studies++;
+  }
+
+  // GitHub Pages must not run Jekyll over generated output.
+  writeFileSync(join(SITE, ".nojekyll"), "");
+  console.log(`portfolio: wrote site/ (index + ${studies} case study page(s))`);
+}
+
+if (process.argv.includes("--site")) {
+  await buildSite();
+} else if (process.argv.includes("--check")) {
   let current = "";
   try { current = readFileSync(join(REPO, "README.md"), "utf8"); } catch { /* stale */ }
   if (current !== body) {
