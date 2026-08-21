@@ -34,16 +34,27 @@ python3 "\$REPO/scripts/clean-room-check.py" --local || {
   exit 1
 }
 
-# README.md is generated from projects/*.json and byte-diff-gated in CI. Catching
-# drift here saves a round trip; it needs no node_modules because build.mjs only
-# imports marked inside the --site path.
-node "\$REPO/scripts/build.mjs" --check || {
+# README.md is generated from projects/*.json and byte-diff-gated in CI.
+#
+# This REGENERATES and stages it rather than failing on staleness. A check whose entire
+# error message is "run this command" should run the command: refusing the commit does not
+# prevent the work, it only moves it, and it made a one-second fix abort as loudly as the
+# clean-room scan above -- which is the one stop here that is actually irreversible.
+#
+# A non-zero exit is still fatal. That means an entry violates schema/project.schema.json,
+# which is a real defect and not staleness.
+#
+# build.mjs reads the WORKING TREE, not the index. With a partially-staged projects/*.json
+# the regenerated README reflects the full working tree. Acceptable for a single author;
+# CI's \`--check\` is the backstop either way. It needs no node_modules because build.mjs
+# only imports marked inside the --site path.
+node "\$REPO/scripts/build.mjs" || {
   echo
-  echo "pre-commit: README.md is stale or a project entry is invalid."
-  echo "Run: node scripts/build.mjs"
+  echo "pre-commit: a project entry is invalid. Commit aborted."
   exit 1
 }
+git add "\$REPO/README.md"
 HOOK
 chmod +x "$REPO/.git/hooks/pre-commit"
 echo "Installed pre-commit hook -> $REPO/.git/hooks/pre-commit"
-echo "  clean-room scan (--local) + generated-README drift check"
+echo "  clean-room scan (--local), then regenerate + stage README.md"
