@@ -6,8 +6,10 @@ breaking it."
 ## Adding a project
 
 1. Write `projects/<id>.json`. The filename and the `id` field must match.
-2. `node scripts/build.mjs` — regenerates `README.md`.
-3. Commit both.
+2. Commit. The pre-commit hook regenerates `README.md` and stages it for you.
+
+(`node scripts/build.mjs` by hand still works and is useful if you want to read the
+rendered result before committing. It is no longer a step you can forget.)
 
 `projects/*.json` is the source of truth. `README.md` is **generated** and diff-gated in
 CI, so hand-editing it will fail the build.
@@ -50,11 +52,21 @@ npm ci
 scripts/install-hooks.sh
 ```
 
-The hook runs the clean-room scan and the generated-README drift check before every
-commit. That ordering is the point: **CI runs after the push, and this repository is
-public**, so a denylisted term caught by CI is a term that is already public and already
-in the remote's history. The hook is the only control that catches it while it is still
-local.
+The hook does two things before every commit, and the difference between them is
+deliberate:
+
+1. **Clean-room scan — aborts the commit.** This is the only hard stop. **CI runs after
+   the push, and this repository is public**, so a denylisted term caught by CI is a term
+   that is already public and already in the remote's history. The hook is the only
+   control that catches it while it is still local and cheaply removable.
+2. **`README.md` — regenerated and staged, never a rejection.** A check whose entire error
+   message is "run this command" should run the command. Refusing the commit did not
+   prevent the work, it only moved it, and it made a one-second fix abort as loudly as the
+   irreversible stop above. An *invalid* entry (one that fails
+   `schema/project.schema.json`) is still fatal — that is a real defect, not staleness.
+
+Keeping those two distinct is the point. A reversible mistake costs one follow-up commit;
+a public disclosure cannot be undone. Only the second kind gets to stop you.
 
 Re-run `scripts/install-hooks.sh` after any rename — the hook bakes its paths in at
 install time and does not track changes to the script that wrote it.
