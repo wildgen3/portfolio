@@ -26,8 +26,10 @@ Around twenty US states run partial business one-stop portals and about thirty r
 Start here:
 
 - [Architecture (C4)](https://github.com/wildgen3/permitportal/blob/main/docs/09-architecture-c4.md)
-- [19 architecture decision records](https://github.com/wildgen3/permitportal/blob/main/docs/adr/README.md)
+- [20 architecture decision records](https://github.com/wildgen3/permitportal/blob/main/docs/adr/README.md)
 - [Rules DSL and its linter](https://github.com/wildgen3/permitportal/blob/main/docs/06-rules-dsl.md)
+- [The rules engine — Kleene evaluator over CEL](https://github.com/wildgen3/permitportal/tree/main/services/resolver)
+- [Golden correctness cases (a profile in, a determination out)](https://github.com/wildgen3/permitportal/tree/main/packages/rules/tests/golden)
 - [AGENTS.md — agent guardrails and the failure log](https://github.com/wildgen3/permitportal/blob/main/AGENTS.md)
 
 [Read the case study →](case-studies/permitportal.md)

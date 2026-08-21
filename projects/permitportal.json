@@ -38,12 +38,20 @@
       "url": "https://github.com/wildgen3/permitportal/blob/main/docs/09-architecture-c4.md"
     },
     {
-      "label": "19 architecture decision records",
+      "label": "20 architecture decision records",
       "url": "https://github.com/wildgen3/permitportal/blob/main/docs/adr/README.md"
     },
     {
       "label": "Rules DSL and its linter",
       "url": "https://github.com/wildgen3/permitportal/blob/main/docs/06-rules-dsl.md"
+    },
+    {
+      "label": "The rules engine \u2014 Kleene evaluator over CEL",
+      "url": "https://github.com/wildgen3/permitportal/tree/main/services/resolver"
+    },
+    {
+      "label": "Golden correctness cases (a profile in, a determination out)",
+      "url": "https://github.com/wildgen3/permitportal/tree/main/packages/rules/tests/golden"
     },
     {
       "label": "AGENTS.md \u2014 agent guardrails and the failure log",
